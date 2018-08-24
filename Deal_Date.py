@@ -150,7 +150,7 @@ class deal_date:
                 # split the datelist, note that for mmddyyyy, no way we can split this
                 datelist = re.split(joinstr, datename)
                 
-                print(datelist)
+                datelist = list(filter(None, datelist))
                 
                 # year, month, day, could be any of them
                 a, b, c = datelist
