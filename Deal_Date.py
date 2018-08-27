@@ -367,9 +367,13 @@ class deal_date:
                 
                     # we want to see if Year is inside the string, and where it is
                     indxm = [m.span() for m in re.finditer(r'Y', tempform, flags=re.IGNORECASE)]    
-
-                    if len(indxm) == 1:
-                        tstart, tend = indxm[0]
+                    
+                    indxB = [m.span() for m in re.finditer(r'b', tempform, flags = re.IGNORECASE)]
+                    
+                    if len(indxB) == 0:
+                    
+                        if len(indxm) == 1:
+                            tstart, tend = indxm[0]
                         if tstart == 1:
                             if len(a) == 2:
                                 datename = '20' + a + seplist[2] + b + seplist[3] + c
@@ -379,6 +383,36 @@ class deal_date:
                         elif tstart == 5:
                             if len(c) == 2:
                                 datename = a + seplist[2] + b + seplist[3] + '20' + c 
+                                
+                    elif len(indxB) == 1:
+                        bstart, bend = indxB[0]
+                        
+                        if bstart == 1:
+                            if a.lower() in cls.spec_month_dict:
+                                a = cls.spec_month_dict[a.lower()]
+                        elif bstart == 3:
+                            if b.lower() in cls.spec_month_dict:
+                                b = cls.spec_month_dict[b.lower()]
+                        elif bstart == 5:
+                            if c.lower() in cls.spec_month_dict:
+                                c = cls.spec_month_dict[c.lower()]
+                        
+                        if len(indxm) == 1:
+                            tstart, tend = indxm[0]
+                        if tstart == 1:
+                            if len(a) == 2:
+                                datename = '20' + a + seplist[2] + b + seplist[3] + c
+                        elif tstart == 3:
+                            if len(b) == 2:
+                                datename = a + seplist[2] + '20' + b + seplist[3] + c
+                        elif tstart == 5:
+                            if len(c) == 2:
+                                datename = a + seplist[2] + b + seplist[3] + '20' + c 
+                      
+                        
+                    else:
+                        raise ValueError("Why you gave more than one B")
+                
 
                     return datetime.datetime.strptime(datename, inputform).strftime('%m/%d/%Y')
             
