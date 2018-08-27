@@ -67,15 +67,15 @@ class deal_date:
                         tstart, tend = indxm[0]
                         if tstart == 1:
                             
-                            datename = '20' + a + b + c
+                            datename = cls.yearprefix + a + b + c
                         
                         elif tstart == 3:
                             
-                            datename = a + '20' + b + c
+                            datename = a + cls.yearprefix + b + c
                                 
                         elif tstart == 5:
                             
-                            datename = a + b + '20' + c 
+                            datename = a + b + cls.yearprefix + c 
                     else:
                         
                         raise ValueError("No Y or too many Y is in the form")
@@ -113,7 +113,7 @@ class deal_date:
                             tstart, tend = indxm[0]
                             if tstart == 1:
                                 
-                                datename = '20' + datename
+                                datename = cls.yearprefix + datename
 
                             elif tstart == 3:
 
@@ -122,16 +122,16 @@ class deal_date:
                                 if len(indxm) == 1:
                                     tstart, tend = indxm[0]
                                     if tstart == 1:
-                                        datename = datename[:len(tempkey)] + '20' + datename[len(tempkey):]
+                                        datename = datename[:len(tempkey)] + cls.yearprefix + datename[len(tempkey):]
                                     else:
-                                        datename = datename[:2] + '20' + datename[2:]
+                                        datename = datename[:2] + cls.yearprefix + datename[2:]
 
                                 else:
                                     raise ValueError("No b or too many b is in the form")
 
                             elif tstart == 5:
 
-                                datename = datename[:-2] + '20' + datename[-2:]
+                                datename = datename[:-2] + cls.yearprefix + datename[-2:]
                                 # print(datename)
 
                         else:
@@ -176,14 +176,14 @@ class deal_date:
                         
                             if tstart == 1:
                                 if len(a) == 2:
-                                    datename = '20' + a + seplist[2] + b
+                                    datename = cls.yearprefix + a + seplist[2] + b
                             elif tstart == 3:
                                 if len(a) + len(b) == 6:
-                                    datename = a + seplist[2] + '20' + b
+                                    datename = a + seplist[2] + cls.yearprefix + b
 
                             elif tstart == 5:
                                 if len(b) == 4:
-                                    datename = a + seplist[2] + b[:2] + '20' + b[2:]
+                                    datename = a + seplist[2] + b[:2] + cls.yearprefix + b[2:]
 
     
                     elif len(indxB) == 1:
@@ -213,7 +213,7 @@ class deal_date:
                         else:
                             tempkey_old = tempkey
                             
-                        # now in this step, we need to figure out if we need to add '20' into the string
+                        # now in this step, we need to figure out if we need to add cls.yearprefix into the string
                         # otherwise we do nothing
 
                         if len(a) + len(b) == 4 + len(tempkey_old):                           
@@ -225,11 +225,11 @@ class deal_date:
                                 if tstart == 1:
                                     # the year is located in the first place
                                     # what the length is
-                                    datename = '20' + datename
+                                    datename = cls.yearprefix + datename
                                 
                                 elif tstart == 3:
 
-                                    datename = a + seplist[2] + '20' + b
+                                    datename = a + seplist[2] + cls.yearprefix + b
                                     
                                 elif tstart == 5:
                                     
@@ -238,9 +238,9 @@ class deal_date:
                                     tlenj = len(tempkey_old)                               
                                         
                                     if tempkey_old == b[:tlenj].lower():
-                                        datename = a + seplist[2] + tempkey + '20' + b[tlenj:]
+                                        datename = a + seplist[2] + tempkey + cls.yearprefix + b[tlenj:]
                                     else:
-                                        datename = tempkey + seplist[2] + b[:2] + '20' + b[2:]
+                                        datename = tempkey + seplist[2] + b[:2] + cls.yearprefix + b[2:]
 
                     #print(datename)
                     return datetime.datetime.strptime(datename, inputform).strftime('%m/%d/%Y')
@@ -278,14 +278,14 @@ class deal_date:
                         
                             if tstart == 1:
                                 if len(a) == 2:
-                                    datename = '20' + a + seplist[3] + b
+                                    datename = cls.yearprefix + a + seplist[3] + b
                             elif tstart == 3:
                                 if len(a) + len(b) == 6:
-                                    datename = a[:2] + '20' + a[2:] + seplist[3] + b
+                                    datename = a[:2] + cls.yearprefix + a[2:] + seplist[3] + b
 
                             elif tstart == 5:
                                 if len(b) == 2:
-                                    datename = a + seplist[3] + '20' + b
+                                    datename = a + seplist[3] + cls.yearprefix + b
 
     
                     elif len(indxB) == 1:
@@ -315,7 +315,7 @@ class deal_date:
                         else:
                             tempkey_old = tempkey
                         
-                        # now in this step, we need to figure out if we need to add '20' into the string
+                        # now in this step, we need to figure out if we need to add cls.yearprefix into the string
                         # otherwise we do nothing
 
                         if len(a) + len(b) == 4 + len(tempkey_old):
@@ -327,7 +327,7 @@ class deal_date:
                                 if tstart == 1:
                                     # the year is located in the first place
                                     # what the length is
-                                    datename = '20' + datename
+                                    datename = cls.yearprefix + datename
                                 
                                 elif tstart == 3:
 
@@ -336,13 +336,13 @@ class deal_date:
                                     
                                     tlenj = len(tempkey_old)
                                     if tempkey_old == a[:tlenj].lower():
-                                        datename = tempkey + '20' + a[tlenj:] + seplist[3] + b
+                                        datename = tempkey + cls.yearprefix + a[tlenj:] + seplist[3] + b
                                     else:
-                                        datename = a[:2] + '20' + a[2:] + seplist[3] + tempkey
+                                        datename = a[:2] + cls.yearprefix + a[2:] + seplist[3] + tempkey
                                     
                                 elif tstart == 5:
                                     
-                                    datename = a + seplist[3] + '20' + b
+                                    datename = a + seplist[3] + cls.yearprefix + b
                             
                     else:
                         raise ValueError("Why you gave more than one B")
@@ -376,13 +376,13 @@ class deal_date:
                             tstart, tend = indxm[0]
                         if tstart == 1:
                             if len(a) == 2:
-                                datename = '20' + a + seplist[2] + b + seplist[3] + c
+                                datename = cls.yearprefix + a + seplist[2] + b + seplist[3] + c
                         elif tstart == 3:
                             if len(b) == 2:
-                                datename = a + seplist[2] + '20' + b + seplist[3] + c
+                                datename = a + seplist[2] + cls.yearprefix + b + seplist[3] + c
                         elif tstart == 5:
                             if len(c) == 2:
-                                datename = a + seplist[2] + b + seplist[3] + '20' + c 
+                                datename = a + seplist[2] + b + seplist[3] + cls.yearprefix + c 
                                 
                     elif len(indxB) == 1:
                         bstart, bend = indxB[0]
@@ -401,13 +401,13 @@ class deal_date:
                             tstart, tend = indxm[0]
                         if tstart == 1:
                             if len(a) == 2:
-                                datename = '20' + a + seplist[2] + b + seplist[3] + c
+                                datename = cls.yearprefix + a + seplist[2] + b + seplist[3] + c
                         elif tstart == 3:
                             if len(b) == 2:
-                                datename = a + seplist[2] + '20' + b + seplist[3] + c
+                                datename = a + seplist[2] + cls.yearprefix + b + seplist[3] + c
                         elif tstart == 5:
                             if len(c) == 2:
-                                datename = a + seplist[2] + b + seplist[3] + '20' + c 
+                                datename = a + seplist[2] + b + seplist[3] + cls.yearprefix + c 
                       
                         
                     else:
