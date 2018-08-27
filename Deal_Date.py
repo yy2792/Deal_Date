@@ -42,6 +42,7 @@ class deal_date:
             if not seplist:
                 raise ValueError("wrong inputformat format")
             
+
             # first strip out all the sep
             if seplist[0] + seplist[1] == '':
                 
@@ -94,12 +95,16 @@ class deal_date:
                             tempkey = key
                             break
                     
+
+                    if tempkey == '':
+                        raise ValueError("illegal format")
+
                     #print(tempkey)
                     #there is special case that, ex, datetiem does not take in Sept
                     if tempkey in cls.spec_month_dict:
                         datename = re.sub(tempkey, cls.spec_month_dict[tempkey], datename)
                         tempkey = cls.spec_month_dict[tempkey]
-                        #print(datename)
+                        # print(datename)
                         
                     if len(datename) == len(tempkey) + 4:
                         indxm = [m.span() for m in re.finditer(r'Y', tempform, flags=re.IGNORECASE)]    
@@ -127,7 +132,7 @@ class deal_date:
                             elif tstart == 5:
 
                                 datename = datename[:-2] + '20' + datename[-2:]
-                                print(datename)
+                                # print(datename)
 
                         else:
                             raise ValueError("illegal format")
@@ -136,42 +141,227 @@ class deal_date:
                 
             # there exists sep
             else:
+                
                 joinstr = ''
-                if seplist[0] == "":
-                    joinstr = seplist[1] 
-                elif seplist[1] == "":
-                    joinstr = seplist[0] 
+
+                if seplist[1] == "":
+                
+                    # in this case, the string will be separated into two parts, the first part is safe and clear, 
+                    # for the later part, we need to determine if abbreviation exists inside it, (b lies where), and the most important part,
+                    # determine wheter Y is two digits or four digits
+                              
+                    joinstr = seplist[0]
+                    
+                    # we have a clean, free of special case date string
+                    tempform = "".join(re.split(joinstr, inputform))
+
+                    # split the date string into two parts
+                    datelist = list(filter(None, re.split(joinstr, datename)))
+                    
+                    a, b = datelist
+
+                    indxm = [m.span() for m in re.finditer(r'Y', tempform, flags=re.IGNORECASE)]    
+                    
+                    indxB = [m.span() for m in re.finditer(r'b', tempform, flags = re.IGNORECASE)]
+
+                    # now we want to see if b exists in tempform
+                    # note that we do not deal with any form all numbers but has a length of less than 6
+
+                    if len(indxB) == 0:
+                        # there is no b
+                        
+                        if len(indxm) == 1:
+                            # where year is located
+                            tstart, tend = indxm[0]
+                        
+                            if tstart == 1:
+                                if len(a) == 2:
+                                    datename = '20' + a + seplist[2] + b
+                            elif tstart == 3:
+                                if len(a) + len(b) == 6:
+                                    datename = a + seplist[2] + '20' + b
+
+                            elif tstart == 5:
+                                if len(b) == 2:
+                                    datename = a + seplist[2] + b[:2] + '20' + b[2:]
+
+    
+                    elif len(indxB) == 1:
+                        # there is b, need to find the month key
+                        
+                        tempkey = ""
+ 
+                        for key in cls.month_dict:
+                            if len(re.findall(key, datename, flags=re.IGNORECASE)) == 1:
+                                tempkey = key
+                                break
+                    
+                        for key in cls.spec_month_dict:
+                            if len(re.findall(key, datename, flags=re.IGNORECASE)) == 1:
+                                tempkey = key
+                                break
+                    
+
+                        if tempkey == '':
+                            raise ValueError("You typed in b, yet there is no month abbre inside the string")
+
+                        # now in this step, we need to figure out if we need to add '20' into the string
+                        # otherwise we do nothing
+
+                        if len(a) + len(b) == 4 + len(tempkey):
+
+                            if len(indxm) == 1:
+                                
+                                tstart, tend = indxm[0]
+                                
+                                if tstart == 1:
+                                    # the year is located in the first place
+                                    # what the length is
+                                    datename = '20' + datename
+                                
+                                elif tstart == 3:
+
+                                    datename = a + seplist[2] + '20' + b
+                                    
+                                elif tstart == 5:
+                                    
+                                    # we want to figure out where JUN is located, cos it is part of b
+                                    # just to see whether the first ... charaters are the same as tempkey
+                                    tlenj = len(tempkey)
+                                    
+                                    datename = a + seplist[2] + tempkey + '20' + b[tlenj:]
+
+
+                            return datetime.datetime.strptime(datename, inputform).strftime('%m/%d/%Y')
+                            
+                            
+                elif seplist[0] == "":
+
+                    # in this case, the string will be separated into two parts, the second part is safe and clar, 
+                    # for the former part, we need to determine if abbreviation exists inside it, (b lies where), and the most important part,
+                    # determine wheter Y is two digits or four digits
+                              
+                    joinstr = seplist[1]
+                    
+                    # we have a clean, free of special case date string
+                    tempform = "".join(re.split(joinstr, inputform))
+
+                    # split the date string into two parts
+                    datelist = list(filter(None, re.split(joinstr, datename)))
+                    
+                    a, b = datelist
+
+                    indxm = [m.span() for m in re.finditer(r'Y', tempform, flags=re.IGNORECASE)]    
+                    
+                    indxB = [m.span() for m in re.finditer(r'b', tempform, flags = re.IGNORECASE)]
+
+                    # now we want to see if b exists in tempform
+                    # note that we do not deal with any form all numbers but has a length of less than 6
+
+                    if len(indxB) == 0:
+                        # there is no b
+                        
+                        if len(indxm) == 1:
+                            # where year is located
+                            tstart, tend = indxm[0]
+                        
+                            if tstart == 1:
+                                if len(a) == 2:
+                                    datename = '20' + a + seplist[3] + b
+                            elif tstart == 3:
+                                if len(a) + len(b) == 6:
+                                    datename = a[:2] + '20' + a[2:] + seplist[3] + b
+
+                            elif tstart == 5:
+                                if len(b) == 2:
+                                    datename = a + seplist[3] + '20' + b
+
+    
+                    elif len(indxB) == 1:
+                        # there is b, need to find the month key
+                        
+                        tempkey = ""
+ 
+                        for key in cls.month_dict:
+                            if len(re.findall(key, datename, flags=re.IGNORECASE)) == 1:
+                                tempkey = key
+                                break
+                    
+                        for key in cls.spec_month_dict:
+                            if len(re.findall(key, datename, flags=re.IGNORECASE)) == 1:
+                                tempkey = key
+                                break
+                    
+
+                        if tempkey == '':
+                            raise ValueError("You typed in b, yet there is no month abbre inside the string")
+
+                        # now in this step, we need to figure out if we need to add '20' into the string
+                        # otherwise we do nothing
+
+                        if len(a) + len(b) == 4 + len(tempkey):
+
+                            if len(indxm) == 1:
+                                
+                                tstart, tend = indxm[0]
+                                
+                                if tstart == 1:
+                                    # the year is located in the first place
+                                    # what the length is
+                                    datename = '20' + datename
+                                
+                                elif tstart == 3:
+
+                                    # we want to figure out where JUN is located, cos it is part of a
+                                    # just to see whether the first ... characters are the same as tempkey
+                                    
+                                    tlenj = len(tempkey)
+                                    if tempkey == a[:tlenj]:
+
+                                        datename = tempkey + '20' + a[tlenj:] + seplist[3] + b
+                                    
+                                elif tstart == 5:
+                                    
+                                    datename = a + seplist[3] + '20' + b
+                            
+                                
+                            return datetime.datetime.strptime(datename, inputform).strftime('%m/%d/%Y')
+
+
+                    else:
+                        raise ValueError("Why you gave more than one B")
+
                 else:
                     joinstr = "[" + seplist[0] + '|' + seplist[1] + "]"
                 
-                # now we have a clean, free of sepcial case date string
-                tempform = "".join(re.split(joinstr, inputform))
+                    # now we have a clean, free of sepcial case date string
+                    tempform = "".join(re.split(joinstr, inputform))
+                    
+                    # split the datelist, note that for mmddyyyy, no way we can split this
+                    datelist = re.split(joinstr, datename)
+                    
+                    datelist = list(filter(None, datelist))
+                    
+                    # year, month, day, could be any of them
+                    a, b, c = datelist
                 
-                # split the datelist, note that for mmddyyyy, no way we can split this
-                datelist = re.split(joinstr, datename)
-                
-                datelist = list(filter(None, datelist))
-                
-                # year, month, day, could be any of them
-                a, b, c = datelist
+                    # we want to see if Year is inside the string, and where it is
+                    indxm = [m.span() for m in re.finditer(r'Y', tempform, flags=re.IGNORECASE)]    
+
+                    if len(indxm) == 1:
+                        tstart, tend = indxm[0]
+                        if tstart == 1:
+                            if len(a) == 2:
+                                datename = '20' + a + seplist[2] + b + seplist[3] + c
+                        elif tstart == 3:
+                            if len(b) == 2:
+                                datename = a + seplist[2] + '20' + b + seplist[3] + c
+                        elif tstart == 5:
+                            if len(c) == 2:
+                                datename = a + seplist[2] + b + seplist[3] + '20' + c 
+
+                    return datetime.datetime.strptime(datename, inputform).strftime('%m/%d/%Y')
             
-                # we want to see if Year is inside the string, and where it is
-                indxm = [m.span() for m in re.finditer(r'Y', tempform, flags=re.IGNORECASE)]    
-
-                if len(indxm) == 1:
-                    tstart, tend = indxm[0]
-                    if tstart == 1:
-                        if len(a) == 2:
-                            datename = '20' + a + seplist[0] + b + seplist[1] + c
-                    elif tstart == 3:
-                        if len(b) == 2:
-                            datename = a + seplist[0] + '20' + b + seplist[1] + c
-                    elif tstart == 5:
-                        if len(c) == 2:
-                            datename = a + seplist[0] + b + seplist[1] + '20' + c 
-
-                return datetime.datetime.strptime(datename, inputform).strftime('%m/%d/%Y')
-        
         except ValueError as e:
             print(e)
             return False
@@ -208,7 +398,17 @@ class deal_date:
             # first strip out all the sep
             if seplist[0] + seplist[1] == '':
                 tempform = inputform
-            
+                
+                # two situations, 8 digits or 6 digits
+                if len(re.findall(r'\d{8}', datename)) >= 1:
+                    reg_ex = re.compile(r'\d{8}', re.IGNORECASE)
+                    res = res + reg_ex.findall(datename)
+                elif len(re.findall(r'\d{6}', datename)) >= 1:
+                    reg_ex = re.compile(r'\d{6}', re.IGNORECASE)
+                    res = res + reg_ex.findall(datename)
+               
+                return res
+
             else:
                 joinstr = ''
                 if seplist[0] == "":
@@ -284,12 +484,15 @@ class deal_date:
 
             if len(seplist) != 2:
                 raise ValueError("wrong inputformat format")
+            
+            seplist2 = seplist[:]
 
             # if special case exists, add '/' to them
             seplist[0] = cls.nospecial(seplist[0])
             seplist[1] = cls.nospecial(seplist[1])
-
-            return seplist
+            
+            # four length list
+            return seplist + seplist2
         
         except ValueError as e:
             print(e)
