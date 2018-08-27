@@ -24,9 +24,9 @@ class deal_date:
     # if only two digit of year is shown, what should be added to year? ex. 19 means 2019
     yearprefix = "20"
     
-    month_dict = {"Jan":1,"Feb":2,"Mar":3,"Apr":4, "May":5, "Jun":6, "Jul":7,"Aug":8,"Sep":9,"Oct":10,"Nov":11,"Dec":12,"Sept":9}
+    month_dict = {"jan":1,"feb":2,"mar":3,"apr":4, "may":5, "jun":6, "jul":7,"aug":8,"sep":9,"oct":10,"nov":11,"dec":12,"sept":9}
     
-    spec_month_dict = {"Sept":"Sep"}
+    spec_month_dict = {"sept":"sep"}
     
     #special case in regular expression
     specialcase = {"*": 1, "+": 1, "\\": 1, "^": 1, "$": 1, ".": 1, "|": 1, "?": 1, "(" : 1, ")": 1, "[": 1, "{": 1, "-": 1}
@@ -204,12 +204,20 @@ class deal_date:
 
                         if tempkey == '':
                             raise ValueError("You typed in b, yet there is no month abbre inside the string")
-
+                        
+                        #there is special case that, ex, datetiem does not take in Sept
+                        if tempkey in cls.spec_month_dict:
+                            datename = re.sub(tempkey, cls.spec_month_dict[tempkey], datename)
+                            tempkey_old = tempkey[:]
+                            tempkey = cls.spec_month_dict[tempkey]
+                        else:
+                            tempkey_old = tempkey
+                            
                         # now in this step, we need to figure out if we need to add '20' into the string
                         # otherwise we do nothing
 
-                        if len(a) + len(b) == 4 + len(tempkey):
-
+                        if len(a) + len(b) == 4 + len(tempkey_old):                           
+                            
                             if len(indxm) == 1:
                                 
                                 tstart, tend = indxm[0]
@@ -227,9 +235,12 @@ class deal_date:
                                     
                                     # we want to figure out where JUN is located, cos it is part of b
                                     # just to see whether the first ... charaters are the same as tempkey
-                                    tlenj = len(tempkey)
-                                    
-                                    datename = a + seplist[2] + tempkey + '20' + b[tlenj:]
+                                    tlenj = len(tempkey_old)                               
+                                        
+                                    if tempkey_old == b[:tlenj].lower():
+                                        datename = a + seplist[2] + tempkey + '20' + b[tlenj:]
+                                    else:
+                                        datename = tempkey + seplist[2] + b[:2] + '20' + b[2:]
 
                     #print(datename)
                     return datetime.datetime.strptime(datename, inputform).strftime('%m/%d/%Y')
@@ -295,11 +306,19 @@ class deal_date:
 
                         if tempkey == '':
                             raise ValueError("You typed in b, yet there is no month abbre inside the string")
-
+                        
+                         #there is special case that, ex, datetiem does not take in Sept
+                        if tempkey in cls.spec_month_dict:
+                            datename = re.sub(tempkey, cls.spec_month_dict[tempkey], datename)
+                            tempkey_old = tempkey[:]
+                            tempkey = cls.spec_month_dict[tempkey]
+                        else:
+                            tempkey_old = tempkey
+                        
                         # now in this step, we need to figure out if we need to add '20' into the string
                         # otherwise we do nothing
 
-                        if len(a) + len(b) == 4 + len(tempkey):
+                        if len(a) + len(b) == 4 + len(tempkey_old):
 
                             if len(indxm) == 1:
                                 
@@ -315,10 +334,11 @@ class deal_date:
                                     # we want to figure out where JUN is located, cos it is part of a
                                     # just to see whether the first ... characters are the same as tempkey
                                     
-                                    tlenj = len(tempkey)
-                                    if tempkey == a[:tlenj]:
-
+                                    tlenj = len(tempkey_old)
+                                    if tempkey_old == a[:tlenj].lower():
                                         datename = tempkey + '20' + a[tlenj:] + seplist[3] + b
+                                    else:
+                                        datename = a[:2] + '20' + a[2:] + seplist[3] + tempkey
                                     
                                 elif tstart == 5:
                                     
