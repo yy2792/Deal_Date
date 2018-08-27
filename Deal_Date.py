@@ -182,7 +182,7 @@ class deal_date:
                                     datename = a + seplist[2] + '20' + b
 
                             elif tstart == 5:
-                                if len(b) == 2:
+                                if len(b) == 4:
                                     datename = a + seplist[2] + b[:2] + '20' + b[2:]
 
     
@@ -231,8 +231,8 @@ class deal_date:
                                     
                                     datename = a + seplist[2] + tempkey + '20' + b[tlenj:]
 
-
-                            return datetime.datetime.strptime(datename, inputform).strftime('%m/%d/%Y')
+                    #print(datename)
+                    return datetime.datetime.strptime(datename, inputform).strftime('%m/%d/%Y')
                             
                             
                 elif seplist[0] == "":
@@ -324,12 +324,12 @@ class deal_date:
                                     
                                     datename = a + seplist[3] + '20' + b
                             
-                                
-                            return datetime.datetime.strptime(datename, inputform).strftime('%m/%d/%Y')
-
-
                     else:
                         raise ValueError("Why you gave more than one B")
+                    
+                    
+                    return datetime.datetime.strptime(datename, inputform).strftime('%m/%d/%Y')
+
 
                 else:
                     joinstr = "[" + seplist[0] + '|' + seplist[1] + "]"
