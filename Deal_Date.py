@@ -519,6 +519,31 @@ class deal_date:
             print(e)
             return False
     
+    @classmethod
+    def find_uniq_dates(cls, datename, inputform):
+        try:
+
+            return list(set(cls.find_all_dates(datename, inputform)))
+        
+        except ValueError as e:
+            print(e)
+            return False
+    
+    @classmethod
+    def replace_dates(cls, datename, inputform):
+        try:
+            
+            datelist = cls.find_uniq_dates(datename, inputform)
+
+            for i in datelist:
+                datename = re.sub(i, "", datename)
+
+            return datename
+
+        except ValueError as e:
+            print(e)
+            return False
+
     @classmethod    
     def deal_uniq_dates(cls, datename, inputform):
         # this method returns a unique list of dates
