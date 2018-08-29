@@ -44,11 +44,15 @@ class deal_spread:
 
         if spread is not False:
             res.append(spread)
+        else:
+            res.append("NA")
 
         dates1 = dd.get_two_dates(cds_string, inputform, nowdate)
 
         if dates1 is not False:
 
             res = res + dates1
+        else:
+            res = res + ['NA','NA']
 
         return res
